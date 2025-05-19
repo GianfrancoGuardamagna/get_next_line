@@ -11,14 +11,20 @@
 
 char *get_next_line(int fd)
 {
-	static char buffer[BUFFER_SIZE];
-	static int position;
-	static int in_buffer;
+	char *buffer;
+	int in_buffer;
+	static char * temp;
 
-	position = 0;
-	in_buffer += read(fd, buffer, BUFFER_SIZE);
-	
-	return ('c');
+	in_buffer = 0;
+	in_buffer = read(fd, buffer, BUFFER_SIZE - 1);
+	temp = NULL;
+	//printf("%d\n", in_buffer); //Devuelve longitud de cadena sin el '\0', que a su vez se puede utilizar como posicion del string
+	//printf("%s\n", buffer);
+	printf("%s\n", temp);
+	if(buffer[in_buffer] != '\0')
+		strcpy(buffer ,temp);
+		get_next_line(fd);
+	return ("c");
 }
 
 int main(int argc, char **argv)
@@ -31,17 +37,16 @@ int main(int argc, char **argv)
         printf("Only one file is allowed...\n");
         return 1;
     }
+
     fd = open(argv[1], O_RDONLY);
     if (fd == -1)
     {
         printf("Error while opening the file...\n");
         return 1;
     }
-    while((doc = get_next_line(fd)) != 0)
-	{
-		printf("%s\n", doc);
-		free(doc);
-	}
+
+    doc = get_next_line(fd);
+
     close(fd);
     return 0;
 }
