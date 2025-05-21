@@ -11,19 +11,26 @@
 
 char *get_next_line(int fd)
 {
-	char *buffer;
+	char buffer[BUFFER_SIZE];
 	int in_buffer;
-	static char * temp;
+	// static char * temp;
 
 	in_buffer = 0;
 	in_buffer = read(fd, buffer, BUFFER_SIZE - 1);
-	temp = NULL;
-	//printf("%d\n", in_buffer); //Devuelve longitud de cadena sin el '\0', que a su vez se puede utilizar como posicion del string
-	//printf("%s\n", buffer);
-	printf("%s\n", temp);
+	// temp = NULL;
+	// printf("%d\n", in_buffer); //Devuelve longitud de cadena sin el '\0', que a su vez se puede utilizar como posicion del string
+	// buffer[in_buffer] = '\0';
+	// printf("%s\n", temp);
 	if(buffer[in_buffer] != '\0')
-		strcpy(buffer ,temp);
+	{
+		printf("%s\n", buffer);
+		// temp += strdup(buffer);
 		get_next_line(fd);
+	}
+	else
+	{
+		// printf("%s\n", temp);
+	}
 	return ("c");
 }
 
