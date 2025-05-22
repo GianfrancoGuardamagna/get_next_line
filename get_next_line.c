@@ -1,59 +1,121 @@
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/22 10:00:00 by gguardam          #+#    #+#             */
+/*   Updated: 2025/05/22 10:00:00 by gguardam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//ELIMINAR AL MOMENTO DE PRESENTAR
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 1024
-# endif
+#include "get_next_line.h"
 
-char *get_next_line(int fd)
+static char	*read_buffer(int fd, char *saved)
 {
-	char buffer[BUFFER_SIZE];
-	int in_buffer;
-	// static char * temp;
+	char	*buffer;
+	int		bytes_read;
 
-	in_buffer = 0;
-	in_buffer = read(fd, buffer, BUFFER_SIZE - 1);
-	// temp = NULL;
-	// printf("%d\n", in_buffer); //Devuelve longitud de cadena sin el '\0', que a su vez se puede utilizar como posicion del string
-	// buffer[in_buffer] = '\0';
-	// printf("%s\n", temp);
-	if(buffer[in_buffer] != '\0')
+	buffer = malloc(BUFFER_SIZE + 1);
+	if (!buffer)
+		return (NULL);
+	bytes_read = 1;
+	while (!gnl_strchr(saved, '\n') && bytes_read != 0)
 	{
-		printf("%s\n", buffer);
-		// temp += strdup(buffer);
-		get_next_line(fd);
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
+		if (bytes_read == -1)
+		{
+			free(buffer);
+			return (NULL);
+		}
+		buffer[bytes_read] = '\0';
+		saved = gnl_strjoin(saved, buffer);
 	}
-	else
-	{
-		// printf("%s\n", temp);
-	}
-	return ("c");
+	free(buffer);
+	return (saved);
 }
 
-int main(int argc, char **argv)
+/*
+** extract_line - Extrae la línea hasta el primer '\n' (incluido)
+** saved: buffer que contiene los datos leídos
+** Retorna: línea extraída con '\n' al final (si existe)
+*/
+static char	*extract_line(char *saved)
 {
-    int fd;
-    char *doc;
-    
-    if (argc != 2)
-    {
-        printf("Only one file is allowed...\n");
-        return 1;
-    }
+	int		i;
+	char	*line;
 
-    fd = open(argv[1], O_RDONLY);
-    if (fd == -1)
-    {
-        printf("Error while opening the file...\n");
-        return 1;
-    }
+	i = 0;
+	if (!saved[i])
+		return (NULL);
+	while (saved[i] && saved[i] != '\n')
+		i++;
+	line = malloc(i + 2);
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (saved[i] && saved[i] != '\n')
+	{
+		line[i] = saved[i];
+		i++;
+	}
+	if (saved[i] == '\n')
+	{
+		line[i] = saved[i];
+		i++;
+	}
+	line[i] = '\0';
+	return (line);
+}
 
-    doc = get_next_line(fd);
+/*
+** update_saved - Actualiza el buffer guardado eliminando la línea ya extraída
+** saved: buffer actual con todos los datos
+** Retorna: nuevo buffer sin la línea que ya se devolvió
+*/
+static char	*update_saved(char *saved)
+{
+	int		i;
+	int		j;
+	char	*new_saved;
 
-    close(fd);
-    return 0;
+	i = 0;
+	while (saved[i] && saved[i] != '\n')
+		i++;
+	if (!saved[i])
+	{
+		free(saved);
+		return (NULL);
+	}
+	new_saved = malloc(gnl_strlen(saved) - i + 1);
+	if (!new_saved)
+		return (NULL);
+	i++;
+	j = 0;
+	while (saved[i])
+		new_saved[j++] = saved[i++];
+	new_saved[j] = '\0';
+	free(saved);
+	return (new_saved);
+}
+
+/*
+** get_next_line - Función principal que devuelve la siguiente línea del archivo
+** fd: file descriptor del archivo a leer
+** Retorna: línea leída (con '\n' si existe) o NULL si no hay más líneas
+*/
+char	*get_next_line(int fd)
+{
+	char		*line;
+	static char	*saved;
+
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	saved = read_buffer(fd, saved);
+	if (!saved)
+		return (NULL);
+	line = extract_line(saved);
+	saved = update_saved(saved);
+	return (line);
 }
