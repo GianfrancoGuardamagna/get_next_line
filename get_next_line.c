@@ -36,11 +36,6 @@ static char	*read_buffer(int fd, char *saved)
 	return (saved);
 }
 
-/*
-** extract_line - Extrae la línea hasta el primer '\n' (incluido)
-** saved: buffer que contiene los datos leídos
-** Retorna: línea extraída con '\n' al final (si existe)
-*/
 static char	*extract_line(char *saved)
 {
 	int		i;
@@ -69,11 +64,6 @@ static char	*extract_line(char *saved)
 	return (line);
 }
 
-/*
-** update_saved - Actualiza el buffer guardado eliminando la línea ya extraída
-** saved: buffer actual con todos los datos
-** Retorna: nuevo buffer sin la línea que ya se devolvió
-*/
 static char	*update_saved(char *saved)
 {
 	int		i;
@@ -100,17 +90,12 @@ static char	*update_saved(char *saved)
 	return (new_saved);
 }
 
-/*
-** get_next_line - Función principal que devuelve la siguiente línea del archivo
-** fd: file descriptor del archivo a leer
-** Retorna: línea leída (con '\n' si existe) o NULL si no hay más líneas
-*/
 char	*get_next_line(int fd)
 {
 	char		*line;
 	static char	*saved;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 2 || BUFFER_SIZE <= 0)
 		return (NULL);
 	saved = read_buffer(fd, saved);
 	if (!saved)
