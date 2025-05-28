@@ -15,11 +15,12 @@
 
 # include <stdlib.h>
 # include <unistd.h>
+# include <stdio.h> //ELIMINAR AL MOMENTO DE ENTREGAR
+# include <fcntl.h> //ELIMINAR AL MOMENTO DE ENTREGAR
 
 char	*get_next_line(int fd);
 char	*gnl_strchr(const char *s, int c);
 size_t	gnl_strlen(const char *s);
 char	*gnl_strjoin(char *s1, char *s2);
-char	*gnl_substr(char const *s, unsigned int start, size_t len);
 
 #endif

@@ -47,22 +47,24 @@ char	*gnl_strjoin(char *s1, char *s2)
 
 	if (!s1 && !s2)
 		return (NULL);
-	if (!s1)
-		s1 = "";
-	if (!s2)
-		s2 = "";
-	result = malloc(gnl_strlen(s1) + gnl_strlen(s2) + 1);
+	result = malloc(gnl_strlen(s1 ? s1 : "") + gnl_strlen(s2 ? s2 : "") + 1);
 	if (!result)
 		return (NULL);
 	i = 0;
-	while (s1[i])
+	if (s1)
 	{
-		result[i] = s1[i];
-		i++;
+		while (s1[i])
+		{
+			result[i] = s1[i];
+			i++;
+		}
 	}
 	j = 0;
-	while (s2[j])
-		result[i++] = s2[j++];
+	if (s2)
+	{
+		while (s2[j])
+			result[i++] = s2[j++];
+	}
 	result[i] = '\0';
 	if (s1)
 		free(s1);

@@ -27,6 +27,8 @@ static char	*read_buffer(int fd, char *saved)
 		if (bytes_read == -1)
 		{
 			free(buffer);
+			if (saved)
+				free(saved);
 			return (NULL);
 		}
 		buffer[bytes_read] = '\0';
@@ -42,8 +44,8 @@ static char	*extract_line(char *saved)
 	char	*line;
 
 	i = 0;
-	if (!saved[i])
-		return (NULL);
+	if (!saved || !saved[i])
+        return (NULL);
 	while (saved[i] && saved[i] != '\n')
 		i++;
 	line = malloc(i + 2);
@@ -70,6 +72,8 @@ static char	*update_saved(char *saved)
 	int		j;
 	char	*new_saved;
 
+	if (!saved)
+		return (NULL);
 	i = 0;
 	while (saved[i] && saved[i] != '\n')
 		i++;
@@ -95,7 +99,7 @@ char	*get_next_line(int fd)
 	char		*line;
 	static char	*saved;
 
-	if (fd < 2 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	saved = read_buffer(fd, saved);
 	if (!saved)
@@ -103,4 +107,25 @@ char	*get_next_line(int fd)
 	line = extract_line(saved);
 	saved = update_saved(saved);
 	return (line);
+}
+
+int main(int argc, char **argv)
+{
+	int fd;
+	char *line;
+
+	(void)argc;
+	fd = open(argv[1], O_RDONLY);
+	if (fd < 0)
+	{
+		perror("open");
+		return (1);
+	}
+	while ((line = get_next_line(fd)) != NULL)
+	{
+		printf("%s", line);
+		free(line);
+	}
+	close(fd);
+	return (0);
 }
