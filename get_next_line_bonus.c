@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 10:00:00 by gguardam          #+#    #+#             */
-/*   Updated: 2025/06/20 16:46:44 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:18:13 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 static char	*read_buffer(int fd, char *saved)
 {
@@ -21,7 +21,7 @@ static char	*read_buffer(int fd, char *saved)
 	if (!buffer)
 		return (NULL);
 	bytes_read = 1;
-	while (!gnl_strchr(saved, '\n') && bytes_read != 0)
+	while (!gnl_strchr_bonus(saved, '\n') && bytes_read != 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read == -1)
@@ -32,7 +32,7 @@ static char	*read_buffer(int fd, char *saved)
 			return (NULL);
 		}
 		buffer[bytes_read] = '\0';
-		saved = gnl_strjoin(saved, buffer);
+		saved = gnl_strjoin_bonus(saved, buffer);
 	}
 	free(buffer);
 	return (saved);
@@ -82,7 +82,7 @@ static char	*update_saved(char *saved)
 		free(saved);
 		return (NULL);
 	}
-	new_saved = malloc(gnl_strlen(saved) - i + 1);
+	new_saved = malloc(gnl_strlen_bonus(saved) - i + 1);
 	if (!new_saved)
 		return (NULL);
 	i++;
@@ -97,14 +97,14 @@ static char	*update_saved(char *saved)
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*saved;
+	static char	*saved[OPEN_MAX];
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	saved = read_buffer(fd, saved);
-	if (!saved)
+	saved[fd] = read_buffer(fd, saved[fd]);
+	if (!saved[fd])
 		return (NULL);
-	line = extract_line(saved);
-	saved = update_saved(saved);
+	line = extract_line(saved[fd]);
+	saved[fd] = update_saved(saved[fd]);
 	return (line);
 }

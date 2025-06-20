@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 10:00:00 by gguardam          #+#    #+#             */
-/*   Updated: 2025/05/31 19:30:40 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/06/20 17:20:39 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
-size_t	gnl_strlen(const char *s)
+size_t	gnl_strlen_bonus(const char *s)
 {
 	size_t	len;
 
@@ -24,7 +24,7 @@ size_t	gnl_strlen(const char *s)
 	return (len);
 }
 
-char	*gnl_strchr(const char *s, int c)
+char	*gnl_strchr_bonus(const char *s, int c)
 {
 	if (!s)
 		return (NULL);
@@ -39,7 +39,7 @@ char	*gnl_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*gnl_strjoin(char *s1, char *s2)
+char	*gnl_strjoin_bonus(char *s1, char *s2)
 {
 	char	*result;
 	size_t	i;
@@ -47,7 +47,7 @@ char	*gnl_strjoin(char *s1, char *s2)
 
 	if (!s1 && !s2)
 		return (NULL);
-	result = malloc(gnl_strlen(s1) + gnl_strlen(s2) + 1);
+	result = malloc(gnl_strlen_bonus(s1) + gnl_strlen_bonus(s2) + 1);
 	if (!result)
 		return (NULL);
 	i = 0;
