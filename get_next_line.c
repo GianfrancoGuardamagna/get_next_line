@@ -6,7 +6,7 @@
 /*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/22 10:00:00 by gguardam          #+#    #+#             */
-/*   Updated: 2025/06/20 16:46:44 by gguardam         ###   ########.fr       */
+/*   Updated: 2025/06/26 19:05:07 by gguardam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,13 @@ static char	*extract_line(char *saved)
 		return (NULL);
 	while (saved[i] && saved[i] != '\n')
 		i++;
-	line = malloc(i + 2);
+	line = malloc(i + 2); //strchar pero que devuelva la longitud hasta \n
 	if (!line)
 		return (NULL);
 	i = 0;
 	while (saved[i] && saved[i] != '\n')
 	{
-		line[i] = saved[i];
+		line[i] = saved[i]; //strlcpy que copie hasta lo que devuela el strchr de arriba
 		i++;
 	}
 	if (saved[i] == '\n')
@@ -84,10 +84,13 @@ static char	*update_saved(char *saved)
 	}
 	new_saved = malloc(gnl_strlen(saved) - i + 1);
 	if (!new_saved)
+	{
+		free(saved);
 		return (NULL);
+	}
 	i++;
 	j = 0;
-	while (saved[i])
+	while (saved[i]) //substr
 		new_saved[j++] = saved[i++];
 	new_saved[j] = '\0';
 	free(saved);
@@ -105,6 +108,10 @@ char	*get_next_line(int fd)
 	if (!saved)
 		return (NULL);
 	line = extract_line(saved);
+	if (!line)
+	{
+		return (NULL);
+	}
 	saved = update_saved(saved);
 	return (line);
 }
