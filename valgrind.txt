@@ -1,3 +1,0 @@
-valgrind --leak-check=full --track-origins=yes ./a.out ~/francinette/tests/get_next_line/fsoares/1char.txt
-
-cc -Wall -Wextra -Werror get_next_line.c get_next_line_utils.c -D BUFFER_SIZE=42
