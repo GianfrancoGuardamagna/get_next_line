@@ -1,147 +1,101 @@
 #include "get_next_line.h"
 
-static char	*read_from_fd(int fd, char *backup)
+static char	*read_from_fd(int fd, char *saved)
 {
 	int		bytes_read;
 	char	*buff;
 
 	buff = ft_calloc(sizeof(char), (BUFFER_SIZE + 1));
 	if (!buff)
+	{
+		free(saved);
 		return (NULL);
+	}
 	bytes_read = 1;
-	while ((!(ft_strchr(backup, '\n')) && bytes_read != 0))
+	while ((!(ft_strchr(saved, '\n')) && bytes_read != 0))
 	{
 		bytes_read = read(fd, buff, BUFFER_SIZE);
 		if (bytes_read < 0)
 		{
 			free(buff);
-			free(backup);
+			free(saved);
 			return (NULL);
 		}
 		buff[bytes_read] = '\0';
-		backup = ft_strjoin(backup, buff);
+		saved = ft_strjoin(saved, buff);
 	}
 	free(buff);
-	return (backup);
+	return (saved);
 }
 
-static char	*get_line(char *backup)
+static char	*extract_line(char *saved)
 {
 	int		i;
 	char	*line;
 
 	i = 0;
-	if (!backup || ! backup[i])
+	if (!saved || ! saved[i])
 		return (NULL);
-	while (backup[i] && backup[i] != '\n')
+	while (saved[i] && saved[i] != '\n')
 		i++;
 	line = ft_calloc(sizeof(char), (i + 2));
 	if (!line)
 		return (NULL);
 	i = 0;
-	while (backup[i] && backup[i] != '\n')
+	while (saved[i] && saved[i] != '\n')
 	{
-		line[i] = backup[i];
+		line[i] = saved[i];
 		i++;
 	}
-	if (backup[i] == '\n')
+	if (saved[i] == '\n')
 	{
-		line[i] = backup[i];
+		line[i] = saved[i];
 		i++;
 	}
 	line[i] = '\0';
 	return (line);
 }
 
-static char	*update_backup(char *backup)
+static char	*update_saved(char *saved)
 {
 	int		i;
 	int		j;
-	char	*new_backup;
+	char	*new_saved;
 
 	i = 0;
-	while (backup[i] && backup[i] != '\n')
+	while (saved[i] && saved[i] != '\n')
 		i++;
-	if (!backup[i])
+	if (!saved[i])
 	{
-		free(backup);
+		free(saved);
 		return (NULL);
 	}
-	new_backup = malloc(sizeof(char) * (ft_strlen(backup) - i + 1));
-	if (!new_backup)
+	new_saved = ft_calloc((ft_strlen(saved) - i + 1), sizeof(char));
+	if (!new_saved)
 	{
-		free(backup);
+		free(saved);
 		return (NULL);
 	}
 	++i;
 	j = 0;
-	while (backup[i])
-		new_backup[j++] = backup[i++];
-	new_backup[j] = '\0';
-	free(backup);
-	return (new_backup);
+	while (saved[i])
+		new_saved[j++] = saved[i++];
+	new_saved[j] = '\0';
+	free(saved);
+	return (new_saved);
 }
 
 char	*get_next_line(int fd)
 {
 	char		*line;
-	static char	*backup;
+	static char	*saved;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	if (!backup)
-	{
-		backup = malloc(1);
-		backup[0] = '\0';
-	}
-	backup = read_from_fd(fd, backup);
-	if (!backup)
+	saved = read_from_fd(fd, saved);
+	if (!saved)
 		return (NULL);
-	line = get_line(backup);
-	backup = update_backup(backup);
+	line = extract_line(saved);
+	saved = update_saved(saved);
 	return (line);
 }
-
-// int main(void)
-// {
-//     int     fd;
-//     char    *line;
-//     int     line_count;
-
-//     // Prueba con un archivo de texto
-//     fd = open("test.txt", O_RDONLY);
-//     if (fd == -1)
-//     {
-//         printf("Error al abrir el archivo\n");
-//         return (1);
-//     }
-
-//     line_count = 1;
-//     while ((line = get_next_line(fd)) != NULL)
-//     {
-//         printf("Línea %d: %s", line_count, line);
-//         free(line);
-//         line_count++;
-//     }
-//     close(fd);
-
-//     // Prueba con entrada estándar (stdin)
-//     printf("\nEscribe algo (Ctrl+D para terminar):\n");
-//     line_count = 1;
-//     while ((line = get_next_line(STDIN_FILENO)) != NULL)
-//     {
-//         printf("Línea %d: %s", line_count, line);
-//         free(line);
-//         line_count++;
-//     }
-
-//     // Prueba con descriptor de archivo inválido
-//     printf("\nProbando con fd inválido:\n");
-//     line = get_next_line(-1);
-//     if (line == NULL)
-//         printf("Correcto: NULL para fd inválido\n");
-//     else
-//         printf("Error: debería ser NULL\n");
-
-//     return (0);
-// }

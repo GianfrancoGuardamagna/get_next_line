@@ -11,9 +11,11 @@ int	main(void)
 	char	*line2;
 	char	*line3;
 
-	fd1 = open("files/creo.txt", O_RDONLY);
-	fd2 = open("files/cable.txt", O_RDONLY);
-	fd3 = open("files/desarma.txt", O_RDONLY);
+	fd1 = open("files/1char.txt", O_RDONLY);
+	// fd2 = open("files/cable.txt", O_RDONLY);
+	// fd3 = open("files/desarma.txt", O_RDONLY);
+	fd2 = open("ERROR", O_RDONLY);
+	fd3 = open("ERROR", O_RDONLY);
 
 	while (1)
 	{

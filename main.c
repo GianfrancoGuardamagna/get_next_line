@@ -8,7 +8,7 @@ int	main(int argc, char **argv)
 
 	(void)argc;
 	(void)argv;
-	fd = open("empty.txt", O_RDONLY);
+	fd = open("files/1char.txt", O_RDONLY);
 	line = get_next_line(fd);
 	while (line != NULL)
 	{
@@ -16,7 +16,7 @@ int	main(int argc, char **argv)
 		free(line);
 		line = get_next_line(fd);
 	}
-	if(line == NULL)
+	if (line == NULL)
 		printf("---//NULL\\---\n");
 	close(fd);
 	return (0);
