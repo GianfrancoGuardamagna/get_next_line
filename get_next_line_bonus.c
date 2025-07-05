@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gguardam <gguardam@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/05 12:49:40 by gguardam          #+#    #+#             */
+/*   Updated: 2025/07/05 15:25:03 by gguardam         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line_bonus.h"
 
 static char	*read_from_fd(int fd, char *saved)
@@ -90,7 +102,7 @@ char	*get_next_line(int fd)
 	char		*line;
 	static char	*saved[OPEN_MAX];
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || fd >= OPEN_MAX || BUFFER_SIZE <= 0)
 		return (NULL);
 	saved[fd] = read_from_fd(fd, saved[fd]);
 	if (!saved[fd])

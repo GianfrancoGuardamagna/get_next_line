@@ -12,11 +12,9 @@ int	main(void)
 	char	*line3;
 
 	fd1 = open("files/1char.txt", O_RDONLY);
-	// fd2 = open("files/cable.txt", O_RDONLY);
-	// fd3 = open("files/desarma.txt", O_RDONLY);
-	fd2 = open("ERROR", O_RDONLY);
-	fd3 = open("ERROR", O_RDONLY);
-
+	fd2 = open("files/cable.txt", O_RDONLY);
+	fd3 = open("files/desarma.txt", O_RDONLY);
+	close(fd1);
 	while (1)
 	{
 		line1 = get_next_line(fd1);
